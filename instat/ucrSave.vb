@@ -1,4 +1,20 @@
-﻿Imports instat
+﻿' R- Instat
+' Copyright (C) 2015-2017
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License 
+' along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Imports instat
 
 Public Class ucrSave
     Public bFirstLoad As Boolean = True
@@ -29,6 +45,8 @@ Public Class ucrSave
         ucrChkSave.bIsActiveRControl = False
         ucrInputComboSave.bIsActiveRControl = False
         ucrInputTextSave.bIsActiveRControl = False
+        ucrInputComboSave.bUpdateRCodeFromControl = True
+        ucrInputTextSave.bUpdateRCodeFromControl = True
     End Sub
 
     Private Sub SetDefaults()
@@ -46,16 +64,11 @@ Public Class ucrSave
         bShowLabel = True
         bShowCheckBox = False
         LabelOrCheckboxSettings()
-        If bIsComboBox Then
-            iTemp = lblSaveText.Location.X + lblSaveText.Size.Width - ucrInputComboSave.Location.X
-            If iTemp > 0 Then
-                ucrInputComboSave.Width = ucrInputComboSave.Size.Width - iTemp
-            End If
-        Else
-            iTemp = lblSaveText.Location.X + lblSaveText.Size.Width - ucrInputTextSave.Location.X
-            If iTemp > 0 Then
-                ucrInputTextSave.Width = ucrInputComboSave.Size.Width - iTemp
-            End If
+        'Do for both in case text/combo not set yet, or will change at run time
+        iTemp = lblSaveText.Location.X + lblSaveText.Size.Width - ucrInputComboSave.Location.X
+        If iTemp > 0 Then
+            ucrInputComboSave.Width = ucrInputComboSave.Size.Width - iTemp
+            ucrInputTextSave.Width = ucrInputComboSave.Width
         End If
     End Sub
 
@@ -146,6 +159,10 @@ Public Class ucrSave
                 ucrInputComboSave.SetDefaultTypeAsModel()
                 ucrInputComboSave.SetItemsTypeAsModels()
                 ucrInputTextSave.SetDefaultTypeAsModel()
+            Case "table"
+                ucrInputComboSave.SetDefaultTypeAsTable()
+                ucrInputComboSave.SetItemsTypeAsTables()
+                ucrInputTextSave.SetDefaultTypeAsTable()
             Case Else
                 MsgBox("Developer error: unrecognised save type: " & strType)
         End Select
@@ -165,6 +182,10 @@ Public Class ucrSave
 
     Public Sub SetSaveTypeAsModel()
         SetSaveType("model")
+    End Sub
+
+    Public Sub SetSaveTypeAsTable()
+        SetSaveType("table")
     End Sub
 
     Public Sub Reset()
@@ -223,52 +244,69 @@ Public Class ucrSave
         UpdateLinkedControls(bReset)
     End Sub
 
+    Protected Overrides Sub UpdateAllParameters()
+        UpdateAssignTo()
+    End Sub
+
+    Public Overrides Sub UpdateLinkedControls(Optional bReset As Boolean = False)
+        MyBase.UpdateLinkedControls(bReset)
+    End Sub
+
     Private Sub UpdateAssignTo(Optional bRemove As Boolean = False)
         Dim strSaveName As String
         Dim strDataName As String = ""
+        Dim clsTempCode As RCodeStructure
 
-        If clsRCode IsNot Nothing Then
-            If bRemove Then
-                clsRCode.RemoveAssignTo()
-            Else
-                If ucrDataFrameSelector IsNot Nothing Then
-                    strDataName = ucrDataFrameSelector.cboAvailableDataFrames.Text
-                End If
-                If bShowCheckBox AndAlso Not ucrChkSave.Checked Then
-                    strSaveName = strAssignToIfUnchecked
+        For i As Integer = 0 To lstAllRCodes.Count - 1
+            clsTempCode = lstAllRCodes(i)
+            If clsTempCode IsNot Nothing Then
+                If bRemove Then
+                    clsTempCode.RemoveAssignTo()
                 Else
-                    strSaveName = GetText()
-                End If
-                If strSaveName <> "" Then
-                    Select Case strSaveType
-                        Case "column"
-                            clsRCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strDataName, strTempColumn:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix, bAssignToColumnWithoutNames:=bAssignToColumnWithoutNames, bInsertColumnBefore:=bInsertColumnBefore)
-                        Case "dataframe"
-                            clsRCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix)
-                        Case "graph"
-                            clsRCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strDataName, strTempGraph:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix)
-                        Case "model"
-                            clsRCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strDataName, strTempModel:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix)
-                    End Select
-                Else
-                    clsRCode.RemoveAssignTo()
+                    If ucrDataFrameSelector IsNot Nothing Then
+                        strDataName = ucrDataFrameSelector.cboAvailableDataFrames.Text
+                    End If
+                    If bShowCheckBox AndAlso Not ucrChkSave.Checked Then
+                        strSaveName = strAssignToIfUnchecked
+                    Else
+                        strSaveName = GetText()
+                    End If
+                    If strSaveName <> "" Then
+                        Select Case strSaveType
+                            Case "column"
+                                clsTempCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strDataName, strTempColumn:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix, bAssignToColumnWithoutNames:=bAssignToColumnWithoutNames, bInsertColumnBefore:=bInsertColumnBefore)
+                            Case "dataframe"
+                                clsTempCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix)
+                            Case "graph"
+                                clsTempCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strDataName, strTempGraph:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix)
+                            Case "model"
+                                clsTempCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strDataName, strTempModel:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix)
+                            Case "table"
+                                clsTempCode.SetAssignTo(strTemp:=strSaveName, strTempDataframe:=strDataName, strTempTable:=strSaveName, bAssignToIsPrefix:=bAssignToIsPrefix)
+                        End Select
+                    Else
+                        clsTempCode.RemoveAssignTo()
+                    End If
                 End If
             End If
-        End If
+        Next
     End Sub
 
     Private Sub ucrInputControls_ControlContentsChanged(ucrChangedControl As ucrCore) Handles ucrInputComboSave.ControlContentsChanged, ucrInputTextSave.ControlContentsChanged
         OnControlContentsChanged()
     End Sub
 
-    Public Overrides Sub UpdateControl(Optional bReset As Boolean = False)
-        If clsRCode IsNot Nothing Then
-            If clsRCode.bToBeAssigned OrElse clsRCode.bIsAssigned Then
+    Public Overrides Sub UpdateControl(Optional bReset As Boolean = False, Optional bCloneIfNeeded As Boolean = False)
+        Dim clsMainRCode As RCodeStructure
+
+        clsMainRCode = GetRCode()
+        If clsMainRCode IsNot Nothing Then
+            If clsMainRCode.bToBeAssigned OrElse clsMainRCode.bIsAssigned Then
                 If bIsComboBox Then
-                    ucrInputComboSave.SetName(clsRCode.strAssignTo)
+                    ucrInputComboSave.SetName(clsMainRCode.strAssignTo)
                     ucrInputTextSave.SetName("")
                 Else
-                    ucrInputTextSave.SetName(clsRCode.strAssignTo)
+                    ucrInputTextSave.SetName(clsMainRCode.strAssignTo)
                     ucrInputComboSave.SetName("")
                 End If
             Else
@@ -279,7 +317,7 @@ Public Class ucrSave
                 If GetText() = strAssignToIfUnchecked Then
                     ucrChkSave.Checked = False
                 Else
-                    ucrChkSave.Checked = (clsRCode.bToBeAssigned OrElse clsRCode.bIsAssigned)
+                    ucrChkSave.Checked = (clsMainRCode.bToBeAssigned OrElse clsMainRCode.bIsAssigned)
                 End If
             End If
             UpdateLinkedControls()
@@ -321,10 +359,22 @@ Public Class ucrSave
     End Sub
 
     Protected Overrides Function CanUpdate() As Object
-        Return ((Not clsRCode.bIsAssigned AndAlso Not clsRCode.bToBeAssigned) AndAlso strSaveType <> "")
+        Return ((Not GetRCode().bIsAssigned AndAlso Not GetRCode().bToBeAssigned) AndAlso strSaveType <> "")
     End Function
 
     Public Overrides Sub AddOrRemoveParameter(bAdd As Boolean)
         UpdateAssignTo(Not bAdd)
     End Sub
+
+    Public Sub AddAdditionalRCode(clsNewRCode As RCodeStructure, Optional iAdditionalPairNo As Integer = -1)
+        AddAdditionalCodeParameterPair(clsNewRCode, Nothing, iAdditionalPairNo)
+    End Sub
+
+    Public Function UserTyped() As Boolean
+        If bIsComboBox Then
+            Return ucrInputComboSave.bUserTyped
+        Else
+            Return ucrInputTextSave.bUserTyped
+        End If
+    End Function
 End Class

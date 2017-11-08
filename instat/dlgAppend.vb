@@ -1,5 +1,5 @@
-﻿' Instat-R
-' Copyright (C) 2015
+﻿' R- Instat
+' Copyright (C) 2015-2017
 '
 ' This program is free software: you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -11,12 +11,12 @@
 ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ' GNU General Public License for more details.
 '
-' You should have received a copy of the GNU General Public License k
+' You should have received a copy of the GNU General Public License 
 ' along with this program.  If not, see <http://www.gnu.org/licenses/>.
-Imports instat
+
 Imports instat.Translations
 Public Class dlgAppend
-    Public bFirstLoad As Boolean = True
+    Private bFirstLoad As Boolean = True
     Private bReset As Boolean = True
     Private clsBindRows As New RFunction
 
@@ -38,17 +38,12 @@ Public Class dlgAppend
 
         ' ucrReceiver
         ucrReceiverAppendDataframe.SetParameter(New RParameter("x", 0))
-        ucrReceiverAppendDataframe.GetParameter().bIncludeArgumentName = False
         ucrReceiverAppendDataframe.SetParameterIsRFunction()
+        ucrReceiverAppendDataframe.GetParameter().bIncludeArgumentName = False
         ucrReceiverAppendDataframe.Selector = ucrSelectorDataframes
         ucrReceiverAppendDataframe.SetMeAsReceiver()
         ucrReceiverAppendDataframe.SetItemType("dataframe")
-
-        ' ucrSave
-        ucrSaveGraph.SetIsTextBox()
-        ucrSaveGraph.SetSaveTypeAsDataFrame()
-        ucrSaveGraph.SetLabelText("New Data Frame Name:")
-
+        ucrReceiverAppendDataframe.strSelectorHeading = "Data Frames"
 
         'chkID
         SetParameter({ucrChkIncludeIDColumn, ucrInputIDColName}, New RParameter(".id", 1))
@@ -58,23 +53,25 @@ Public Class dlgAppend
         ucrInputIDColName.bAddRemoveParameter = False
         ucrInputIDColName.SetLinkedDisplayControl(lblIDColName)
 
-
+        ' ucrSave
+        ucrSaveGraph.SetIsTextBox()
+        ucrSaveGraph.SetSaveTypeAsDataFrame()
+        ucrSaveGraph.SetLabelText("New Data Frame Name:")
+        ucrSaveGraph.SetPrefix("Append")
     End Sub
 
     Private Sub SetDefaults()
-        Dim clsDefaultBindRows As New RFunction
+        clsBindRows = New RFunction
 
         ucrSelectorDataframes.Reset()
         ucrSaveGraph.Reset()
 
-        clsDefaultBindRows.SetRCommand("bind_rows")
-        clsDefaultBindRows.AddParameter(".id", Chr(34) & "id" & Chr(34))
-        clsDefaultBindRows.SetAssignTo(strTemp:="Append", strTempDataframe:="Append")
+        clsBindRows.SetPackageName("dplyr")
+        clsBindRows.SetRCommand("bind_rows")
+        clsBindRows.AddParameter(".id", Chr(34) & "id" & Chr(34))
+        clsBindRows.SetAssignTo(ucrSaveGraph.GetText(), strTempDataframe:=ucrSaveGraph.GetText())
 
-        clsBindRows = clsDefaultBindRows.Clone()
         ucrBase.clsRsyntax.SetBaseRFunction(clsBindRows)
-
-        TestOKEnabled()
     End Sub
 
     Private Sub SetRCodeForControls(bReset As Boolean)
@@ -82,7 +79,7 @@ Public Class dlgAppend
     End Sub
 
     Private Sub TestOKEnabled()
-        If Not ucrReceiverAppendDataframe.IsEmpty AndAlso ucrSaveGraph.IsComplete() Then
+        If ucrReceiverAppendDataframe.lstSelectedVariables.Items.Count > 1 AndAlso ucrSaveGraph.IsComplete() Then
             If ucrChkIncludeIDColumn.Checked AndAlso ucrInputIDColName.IsEmpty Then
                 ucrBase.OKEnabled(False)
             Else
@@ -99,10 +96,10 @@ Public Class dlgAppend
     Private Sub ucrBase_ClickReset(sender As Object, e As EventArgs) Handles ucrBase.ClickReset
         SetDefaults()
         SetRCodeForControls(True)
+        TestOKEnabled()
     End Sub
 
     Private Sub ucrReceiverAppendDataframe_ControlContentsChanged(ucrChangedControl As ucrCore) Handles ucrReceiverAppendDataframe.ControlContentsChanged, ucrSaveGraph.ControlContentsChanged, ucrChkIncludeIDColumn.ControlContentsChanged, ucrInputIDColName.ControlContentsChanged
         TestOKEnabled()
     End Sub
-
 End Class

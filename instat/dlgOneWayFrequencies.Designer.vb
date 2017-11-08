@@ -1,4 +1,20 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿' R- Instat
+' Copyright (C) 2015-2017
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License 
+' along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class dlgOneWayFrequencies
     Inherits System.Windows.Forms.Form
 
@@ -22,201 +38,196 @@ Partial Class dlgOneWayFrequencies
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(dlgOneWayFrequencies))
         Me.grpSort = New System.Windows.Forms.GroupBox()
-        Me.rdoDescending = New System.Windows.Forms.RadioButton()
-        Me.rdoAscending = New System.Windows.Forms.RadioButton()
+        Me.rdoDescendingFrequencies = New System.Windows.Forms.RadioButton()
+        Me.rdoAscendingFrequencies = New System.Windows.Forms.RadioButton()
         Me.rdoNone = New System.Windows.Forms.RadioButton()
         Me.ucrPnlSort = New instat.UcrPanel()
         Me.cmdOptions = New System.Windows.Forms.Button()
         Me.lblSelectedVariable = New System.Windows.Forms.Label()
         Me.rdoGraph = New System.Windows.Forms.RadioButton()
         Me.rdoTable = New System.Windows.Forms.RadioButton()
+        Me.rdoBoth = New System.Windows.Forms.RadioButton()
+        Me.ucrNudGroups = New instat.ucrNud()
+        Me.ucrPnlFrequencies = New instat.UcrPanel()
+        Me.ucrChkGroupData = New instat.ucrCheck()
         Me.ucrReceiverWeights = New instat.ucrReceiverSingle()
-        Me.ucrPnlFreqDisplay = New instat.UcrPanel()
         Me.ucrChkWeights = New instat.ucrCheck()
         Me.ucrChkFlip = New instat.ucrCheck()
         Me.ucrBase = New instat.ucrButtons()
-        Me.ucrReceiverOneWayFreq = New instat.ucrReceiverSingle()
         Me.ucrSelectorOneWayFreq = New instat.ucrSelectorByDataFrameAddRemove()
+        Me.ucrReceiverOneWayFreq = New instat.ucrReceiverMultiple()
+        Me.ucrSaveGraph = New instat.ucrSave()
         Me.grpSort.SuspendLayout()
         Me.SuspendLayout()
         '
         'grpSort
         '
-        Me.grpSort.Controls.Add(Me.rdoDescending)
-        Me.grpSort.Controls.Add(Me.rdoAscending)
+        Me.grpSort.Controls.Add(Me.rdoDescendingFrequencies)
+        Me.grpSort.Controls.Add(Me.rdoAscendingFrequencies)
         Me.grpSort.Controls.Add(Me.rdoNone)
         Me.grpSort.Controls.Add(Me.ucrPnlSort)
-        Me.grpSort.Location = New System.Drawing.Point(270, 99)
+        resources.ApplyResources(Me.grpSort, "grpSort")
         Me.grpSort.Name = "grpSort"
-        Me.grpSort.Size = New System.Drawing.Size(120, 91)
-        Me.grpSort.TabIndex = 3
         Me.grpSort.TabStop = False
-        Me.grpSort.Text = "Sort"
         '
-        'rdoDescending
+        'rdoDescendingFrequencies
         '
-        Me.rdoDescending.AutoSize = True
-        Me.rdoDescending.Location = New System.Drawing.Point(10, 65)
-        Me.rdoDescending.Name = "rdoDescending"
-        Me.rdoDescending.Size = New System.Drawing.Size(82, 17)
-        Me.rdoDescending.TabIndex = 2
-        Me.rdoDescending.TabStop = True
-        Me.rdoDescending.Text = "Descending"
-        Me.rdoDescending.UseVisualStyleBackColor = True
+        resources.ApplyResources(Me.rdoDescendingFrequencies, "rdoDescendingFrequencies")
+        Me.rdoDescendingFrequencies.Name = "rdoDescendingFrequencies"
+        Me.rdoDescendingFrequencies.TabStop = True
+        Me.rdoDescendingFrequencies.UseVisualStyleBackColor = True
         '
-        'rdoAscending
+        'rdoAscendingFrequencies
         '
-        Me.rdoAscending.AutoSize = True
-        Me.rdoAscending.Location = New System.Drawing.Point(10, 43)
-        Me.rdoAscending.Name = "rdoAscending"
-        Me.rdoAscending.Size = New System.Drawing.Size(75, 17)
-        Me.rdoAscending.TabIndex = 1
-        Me.rdoAscending.TabStop = True
-        Me.rdoAscending.Text = "Ascending"
-        Me.rdoAscending.UseVisualStyleBackColor = True
+        resources.ApplyResources(Me.rdoAscendingFrequencies, "rdoAscendingFrequencies")
+        Me.rdoAscendingFrequencies.Name = "rdoAscendingFrequencies"
+        Me.rdoAscendingFrequencies.TabStop = True
+        Me.rdoAscendingFrequencies.UseVisualStyleBackColor = True
         '
         'rdoNone
         '
-        Me.rdoNone.AutoSize = True
-        Me.rdoNone.Location = New System.Drawing.Point(10, 21)
+        resources.ApplyResources(Me.rdoNone, "rdoNone")
         Me.rdoNone.Name = "rdoNone"
-        Me.rdoNone.Size = New System.Drawing.Size(51, 17)
-        Me.rdoNone.TabIndex = 0
         Me.rdoNone.TabStop = True
-        Me.rdoNone.Text = "None"
         Me.rdoNone.UseVisualStyleBackColor = True
         '
         'ucrPnlSort
         '
-        Me.ucrPnlSort.Location = New System.Drawing.Point(3, 16)
+        resources.ApplyResources(Me.ucrPnlSort, "ucrPnlSort")
         Me.ucrPnlSort.Name = "ucrPnlSort"
-        Me.ucrPnlSort.Size = New System.Drawing.Size(114, 69)
-        Me.ucrPnlSort.TabIndex = 0
         '
         'cmdOptions
         '
-        Me.cmdOptions.Location = New System.Drawing.Point(321, 203)
+        resources.ApplyResources(Me.cmdOptions, "cmdOptions")
         Me.cmdOptions.Name = "cmdOptions"
-        Me.cmdOptions.Size = New System.Drawing.Size(69, 23)
-        Me.cmdOptions.TabIndex = 6
-        Me.cmdOptions.Text = " Options"
         Me.cmdOptions.UseVisualStyleBackColor = True
         '
         'lblSelectedVariable
         '
-        Me.lblSelectedVariable.AutoSize = True
-        Me.lblSelectedVariable.Location = New System.Drawing.Point(267, 43)
+        resources.ApplyResources(Me.lblSelectedVariable, "lblSelectedVariable")
         Me.lblSelectedVariable.Name = "lblSelectedVariable"
-        Me.lblSelectedVariable.Size = New System.Drawing.Size(93, 13)
-        Me.lblSelectedVariable.TabIndex = 1
-        Me.lblSelectedVariable.Text = "Selected Variable:"
         '
         'rdoGraph
         '
-        Me.rdoGraph.AutoSize = True
-        Me.rdoGraph.Location = New System.Drawing.Point(10, 279)
+        resources.ApplyResources(Me.rdoGraph, "rdoGraph")
+        Me.rdoGraph.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaption
+        Me.rdoGraph.FlatAppearance.BorderSize = 2
+        Me.rdoGraph.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.ActiveCaption
         Me.rdoGraph.Name = "rdoGraph"
-        Me.rdoGraph.Size = New System.Drawing.Size(54, 17)
-        Me.rdoGraph.TabIndex = 9
-        Me.rdoGraph.TabStop = True
-        Me.rdoGraph.Text = "Graph"
         Me.rdoGraph.UseVisualStyleBackColor = True
         '
         'rdoTable
         '
-        Me.rdoTable.AutoSize = True
-        Me.rdoTable.Location = New System.Drawing.Point(10, 257)
+        resources.ApplyResources(Me.rdoTable, "rdoTable")
+        Me.rdoTable.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaption
+        Me.rdoTable.FlatAppearance.BorderSize = 2
+        Me.rdoTable.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.ActiveCaption
         Me.rdoTable.Name = "rdoTable"
-        Me.rdoTable.Size = New System.Drawing.Size(52, 17)
-        Me.rdoTable.TabIndex = 8
-        Me.rdoTable.TabStop = True
-        Me.rdoTable.Text = "Table"
         Me.rdoTable.UseVisualStyleBackColor = True
+        '
+        'rdoBoth
+        '
+        resources.ApplyResources(Me.rdoBoth, "rdoBoth")
+        Me.rdoBoth.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveCaption
+        Me.rdoBoth.FlatAppearance.BorderSize = 2
+        Me.rdoBoth.FlatAppearance.CheckedBackColor = System.Drawing.SystemColors.ActiveCaption
+        Me.rdoBoth.Name = "rdoBoth"
+        Me.rdoBoth.UseVisualStyleBackColor = True
+        '
+        'ucrNudGroups
+        '
+        Me.ucrNudGroups.DecimalPlaces = New Decimal(New Integer() {0, 0, 0, 0})
+        Me.ucrNudGroups.Increment = New Decimal(New Integer() {1, 0, 0, 0})
+        resources.ApplyResources(Me.ucrNudGroups, "ucrNudGroups")
+        Me.ucrNudGroups.Maximum = New Decimal(New Integer() {100, 0, 0, 0})
+        Me.ucrNudGroups.Minimum = New Decimal(New Integer() {0, 0, 0, 0})
+        Me.ucrNudGroups.Name = "ucrNudGroups"
+        Me.ucrNudGroups.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        'ucrPnlFrequencies
+        '
+        resources.ApplyResources(Me.ucrPnlFrequencies, "ucrPnlFrequencies")
+        Me.ucrPnlFrequencies.Name = "ucrPnlFrequencies"
+        '
+        'ucrChkGroupData
+        '
+        Me.ucrChkGroupData.Checked = False
+        resources.ApplyResources(Me.ucrChkGroupData, "ucrChkGroupData")
+        Me.ucrChkGroupData.Name = "ucrChkGroupData"
         '
         'ucrReceiverWeights
         '
         Me.ucrReceiverWeights.frmParent = Me
-        Me.ucrReceiverWeights.Location = New System.Drawing.Point(119, 205)
-        Me.ucrReceiverWeights.Margin = New System.Windows.Forms.Padding(0)
+        resources.ApplyResources(Me.ucrReceiverWeights, "ucrReceiverWeights")
         Me.ucrReceiverWeights.Name = "ucrReceiverWeights"
         Me.ucrReceiverWeights.Selector = Nothing
-        Me.ucrReceiverWeights.Size = New System.Drawing.Size(120, 20)
-        Me.ucrReceiverWeights.TabIndex = 5
-        '
-        'ucrPnlFreqDisplay
-        '
-        Me.ucrPnlFreqDisplay.Location = New System.Drawing.Point(2, 252)
-        Me.ucrPnlFreqDisplay.Name = "ucrPnlFreqDisplay"
-        Me.ucrPnlFreqDisplay.Size = New System.Drawing.Size(91, 49)
-        Me.ucrPnlFreqDisplay.TabIndex = 4
+        Me.ucrReceiverWeights.strNcFilePath = ""
+        Me.ucrReceiverWeights.ucrSelector = Nothing
         '
         'ucrChkWeights
         '
         Me.ucrChkWeights.Checked = False
-        Me.ucrChkWeights.Location = New System.Drawing.Point(10, 205)
+        resources.ApplyResources(Me.ucrChkWeights, "ucrChkWeights")
         Me.ucrChkWeights.Name = "ucrChkWeights"
-        Me.ucrChkWeights.Size = New System.Drawing.Size(129, 20)
-        Me.ucrChkWeights.TabIndex = 4
         '
         'ucrChkFlip
         '
         Me.ucrChkFlip.Checked = False
-        Me.ucrChkFlip.Location = New System.Drawing.Point(10, 231)
+        resources.ApplyResources(Me.ucrChkFlip, "ucrChkFlip")
         Me.ucrChkFlip.Name = "ucrChkFlip"
-        Me.ucrChkFlip.Size = New System.Drawing.Size(145, 20)
-        Me.ucrChkFlip.TabIndex = 7
         '
         'ucrBase
         '
-        Me.ucrBase.Location = New System.Drawing.Point(10, 302)
+        resources.ApplyResources(Me.ucrBase, "ucrBase")
         Me.ucrBase.Name = "ucrBase"
-        Me.ucrBase.Size = New System.Drawing.Size(410, 52)
-        Me.ucrBase.TabIndex = 11
-        '
-        'ucrReceiverOneWayFreq
-        '
-        Me.ucrReceiverOneWayFreq.frmParent = Me
-        Me.ucrReceiverOneWayFreq.Location = New System.Drawing.Point(270, 60)
-        Me.ucrReceiverOneWayFreq.Margin = New System.Windows.Forms.Padding(0)
-        Me.ucrReceiverOneWayFreq.Name = "ucrReceiverOneWayFreq"
-        Me.ucrReceiverOneWayFreq.Selector = Nothing
-        Me.ucrReceiverOneWayFreq.Size = New System.Drawing.Size(120, 20)
-        Me.ucrReceiverOneWayFreq.TabIndex = 2
         '
         'ucrSelectorOneWayFreq
         '
         Me.ucrSelectorOneWayFreq.bShowHiddenColumns = False
         Me.ucrSelectorOneWayFreq.bUseCurrentFilter = True
-        Me.ucrSelectorOneWayFreq.Location = New System.Drawing.Point(10, 10)
-        Me.ucrSelectorOneWayFreq.Margin = New System.Windows.Forms.Padding(0)
+        resources.ApplyResources(Me.ucrSelectorOneWayFreq, "ucrSelectorOneWayFreq")
         Me.ucrSelectorOneWayFreq.Name = "ucrSelectorOneWayFreq"
-        Me.ucrSelectorOneWayFreq.Size = New System.Drawing.Size(210, 180)
-        Me.ucrSelectorOneWayFreq.TabIndex = 0
+        '
+        'ucrReceiverOneWayFreq
+        '
+        Me.ucrReceiverOneWayFreq.frmParent = Me
+        resources.ApplyResources(Me.ucrReceiverOneWayFreq, "ucrReceiverOneWayFreq")
+        Me.ucrReceiverOneWayFreq.Name = "ucrReceiverOneWayFreq"
+        Me.ucrReceiverOneWayFreq.Selector = Nothing
+        Me.ucrReceiverOneWayFreq.strNcFilePath = ""
+        Me.ucrReceiverOneWayFreq.ucrSelector = Nothing
+        '
+        'ucrSaveGraph
+        '
+        resources.ApplyResources(Me.ucrSaveGraph, "ucrSaveGraph")
+        Me.ucrSaveGraph.Name = "ucrSaveGraph"
         '
         'dlgOneWayFrequencies
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        resources.ApplyResources(Me, "$this")
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(427, 360)
+        Me.Controls.Add(Me.ucrSaveGraph)
+        Me.Controls.Add(Me.ucrReceiverOneWayFreq)
+        Me.Controls.Add(Me.rdoBoth)
         Me.Controls.Add(Me.rdoGraph)
-        Me.Controls.Add(Me.ucrReceiverWeights)
+        Me.Controls.Add(Me.ucrNudGroups)
         Me.Controls.Add(Me.rdoTable)
-        Me.Controls.Add(Me.ucrPnlFreqDisplay)
+        Me.Controls.Add(Me.ucrPnlFrequencies)
+        Me.Controls.Add(Me.ucrChkGroupData)
+        Me.Controls.Add(Me.ucrReceiverWeights)
         Me.Controls.Add(Me.ucrChkWeights)
         Me.Controls.Add(Me.ucrChkFlip)
         Me.Controls.Add(Me.lblSelectedVariable)
         Me.Controls.Add(Me.cmdOptions)
         Me.Controls.Add(Me.grpSort)
         Me.Controls.Add(Me.ucrBase)
-        Me.Controls.Add(Me.ucrReceiverOneWayFreq)
         Me.Controls.Add(Me.ucrSelectorOneWayFreq)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
         Me.MaximizeBox = False
         Me.MinimizeBox = False
         Me.Name = "dlgOneWayFrequencies"
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "One Way Frequencies"
         Me.grpSort.ResumeLayout(False)
         Me.grpSort.PerformLayout()
         Me.ResumeLayout(False)
@@ -225,11 +236,10 @@ Partial Class dlgOneWayFrequencies
     End Sub
 
     Friend WithEvents ucrSelectorOneWayFreq As ucrSelectorByDataFrameAddRemove
-    Friend WithEvents ucrReceiverOneWayFreq As ucrReceiverSingle
     Friend WithEvents ucrBase As ucrButtons
     Friend WithEvents grpSort As GroupBox
-    Friend WithEvents rdoDescending As RadioButton
-    Friend WithEvents rdoAscending As RadioButton
+    Friend WithEvents rdoDescendingFrequencies As RadioButton
+    Friend WithEvents rdoAscendingFrequencies As RadioButton
     Friend WithEvents rdoNone As RadioButton
     Friend WithEvents ucrPnlSort As UcrPanel
     Friend WithEvents cmdOptions As Button
@@ -237,7 +247,12 @@ Partial Class dlgOneWayFrequencies
     Friend WithEvents ucrChkFlip As ucrCheck
     Friend WithEvents ucrReceiverWeights As ucrReceiverSingle
     Friend WithEvents ucrChkWeights As ucrCheck
+    Friend WithEvents ucrNudGroups As ucrNud
+    Friend WithEvents ucrChkGroupData As ucrCheck
     Friend WithEvents rdoGraph As RadioButton
     Friend WithEvents rdoTable As RadioButton
-    Friend WithEvents ucrPnlFreqDisplay As UcrPanel
+    Friend WithEvents ucrPnlFrequencies As UcrPanel
+    Friend WithEvents rdoBoth As RadioButton
+    Friend WithEvents ucrReceiverOneWayFreq As ucrReceiverMultiple
+    Friend WithEvents ucrSaveGraph As ucrSave
 End Class

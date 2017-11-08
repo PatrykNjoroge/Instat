@@ -1,5 +1,5 @@
-﻿' Instat+R
-' Copyright (C) 2015
+﻿' R- Instat
+' Copyright (C) 2015-2017
 '
 ' This program is free software: you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -11,13 +11,14 @@
 ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ' GNU General Public License for more details.
 '
-' You should have received a copy of the GNU General Public License k
+' You should have received a copy of the GNU General Public License 
 ' along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Public Class RFunction
     Inherits RCodeStructure
 
     Public strRCommand As String
+    Private strPackageName As String = ""
 
     Public Sub New()
         OnParametersChanged()
@@ -28,6 +29,10 @@ Public Class RFunction
         bIsAssigned = False
     End Sub
 
+    Public Sub SetPackageName(strName As String)
+        strPackageName = strName
+    End Sub
+
     Public Overrides Function ToScript(Optional ByRef strScript As String = "", Optional strTemp As String = "") As String
         'Converting the RFunction into a string that when run in R gives the appropriate output
         Dim i As Integer
@@ -35,7 +40,10 @@ Public Class RFunction
 
         'Parameters are sorted in the appropriate order and then the script is built.
         SortParameters()
-        strTemp = strRCommand & "("
+        If strPackageName <> "" Then
+            strTemp = strPackageName & "::"
+        End If
+        strTemp = strTemp & strRCommand & "("
         For i = 0 To clsParameters.Count - 1
             If i > 0 Then
                 strTemp = strTemp & ", "
@@ -43,7 +51,16 @@ Public Class RFunction
             strTemp = strTemp & clsParameters(i).ToScript(strScript)
         Next
         strTemp = strTemp & ")"
-
+        If bToScriptAsRString Then
+            'TODO should also check assignment of parameters
+            If bToBeAssigned OrElse bIsAssigned Then
+                MsgBox("Developer error: Using bToScriptAsRString = True when RFunction is assigned will not produce the correct script. Remove assignment to use this options correctly.")
+            End If
+            'Cannot have double quotes ("") in the string because strTemp will be wrapped with ""
+            'In most cases signle quotes (') will give same functionality, though it's preferable to avoid this when constructing the RFunction
+            strTemp = strTemp.Replace(Chr(34), Chr(39))
+            strTemp = Chr(34) & strTemp & Chr(34)
+        End If
         Return MyBase.ToScript(strScript, strTemp)
     End Function
 
@@ -66,30 +83,48 @@ Public Class RFunction
         Return Nothing
     End Function
 
+    Public Overrides Sub Clear()
+        SetRCommand("")
+        SetPackageName("")
+        MyBase.Clear()
+    End Sub
+
     Public Overrides Sub ClearParameters()
         MyBase.ClearParameters()
     End Sub
 
     Public Overrides Function Clone() As RCodeStructure
-
         Dim clsRFunction As New RFunction
         Dim clsRParam As RParameter
-        clsRFunction.strRCommand = strRCommand
+
+        'RCode properties
         clsRFunction.strAssignTo = strAssignTo
         clsRFunction.strAssignToDataFrame = strAssignToDataFrame
         clsRFunction.strAssignToColumn = strAssignToColumn
         clsRFunction.strAssignToModel = strAssignToModel
         clsRFunction.strAssignToGraph = strAssignToGraph
+        clsRFunction.strAssignToTable = strAssignToTable
         clsRFunction.bToBeAssigned = bToBeAssigned
         clsRFunction.bIsAssigned = bIsAssigned
         clsRFunction.bAssignToIsPrefix = bAssignToIsPrefix
-
+        clsRFunction.bAssignToColumnWithoutNames = bAssignToColumnWithoutNames
+        clsRFunction.bInsertColumnBefore = bInsertColumnBefore
+        clsRFunction.iNumberOfAddedParameters = iNumberOfAddedParameters
+        clsRFunction.iPosition = iPosition
+        clsRFunction.iCallType = iCallType
+        clsRFunction.bExcludeAssignedFunctionOutput = bExcludeAssignedFunctionOutput
+        clsRFunction.bClearFromGlobal = bClearFromGlobal
+        clsRFunction.bToScriptAsRString = bToScriptAsRString
+        clsRFunction.Tag = Tag
         For Each clsRParam In clsParameters
             clsRFunction.AddParameter(clsRParam.Clone)
         Next
 
-        Return clsRFunction
+        'RFunction specific properties
+        clsRFunction.strPackageName = strPackageName
+        clsRFunction.strRCommand = strRCommand
 
+        Return clsRFunction
     End Function
 
     Public ReadOnly Property iParameterCount() As Integer

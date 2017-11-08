@@ -1,5 +1,5 @@
-﻿' Instat-R
-' Copyright (C) 2015
+﻿' R- Instat
+' Copyright (C) 2015-2017
 '
 ' This program is free software: you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -11,8 +11,9 @@
 ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ' GNU General Public License for more details.
 '
-' You should have received a copy of the GNU General Public License k
+' You should have received a copy of the GNU General Public License 
 ' along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 Imports instat
 Imports instat.Translations
 
@@ -44,8 +45,12 @@ Public Class ucrDataFrame
 
     Private Sub InitialiseControl()
         bUseCurrentFilter = True
-        SetRDefault("")
+        lblDataFrame.AutoSize = True
         bUpdateRCodeFromControl = True
+        'TODO remove this once control updated
+        cboAvailableDataFrames.DropDownStyle = ComboBoxStyle.DropDownList
+        cboAvailableDataFrames.AutoCompleteMode = AutoCompleteMode.None
+        cboAvailableDataFrames.AutoCompleteSource = AutoCompleteSource.None
     End Sub
 
     Public Sub Reset()
@@ -83,7 +88,6 @@ Public Class ucrDataFrame
             cboAvailableDataFrames.Text = ""
         End If
         If strCurrDataFrame <> cboAvailableDataFrames.Text Then
-            UpdateParameter()
             RaiseEvent DataFrameChanged(sender, e, strCurrDataFrame)
             strCurrDataFrame = cboAvailableDataFrames.Text
             SetDataFrameProperties()
@@ -91,14 +95,13 @@ Public Class ucrDataFrame
         End If
     End Sub
 
-    Public Sub UpdateParameter()
-        If clsParameter IsNot Nothing Then
+    Public Overrides Sub UpdateParameter(clsTempParam As RParameter)
+        If clsTempParam IsNot Nothing Then
             If bParameterIsString Then
-                clsParameter.SetArgumentValue(Chr(34) & cboAvailableDataFrames.Text & Chr(34))
+                clsTempParam.SetArgumentValue(Chr(34) & cboAvailableDataFrames.Text & Chr(34))
             ElseIf bParameterIsRFunction Then
-                clsParameter.SetArgument(clsCurrDataFrame)
+                clsTempParam.SetArgument(clsCurrDataFrame)
             End If
-            UpdateRCode()
         End If
     End Sub
 
@@ -118,7 +121,7 @@ Public Class ucrDataFrame
             clsParam.SetArgumentName("data_name")
             clsParam.SetArgumentValue(Chr(34) & cboAvailableDataFrames.Text & Chr(34))
             clsCurrDataFrame.AddParameter(clsParam)
-            clsCurrDataFrame.SetAssignTo(cboAvailableDataFrames.Text & "_temp")
+            clsCurrDataFrame.SetAssignTo(cboAvailableDataFrames.Text)
         End If
     End Sub
 
@@ -170,19 +173,22 @@ Public Class ucrDataFrame
         Clipboard.SetText(cboAvailableDataFrames.SelectedText)
     End Sub
 
-    Public Overrides Sub UpdateControl(Optional bReset As Boolean = False)
+    Public Overrides Sub UpdateControl(Optional bReset As Boolean = False, Optional bCloneIfNeeded As Boolean = False)
         Dim clsTempDataParameter As RParameter
         Dim strDataFrameName As String = ""
+        Dim clsMainParameter As RParameter
 
-        MyBase.UpdateControl()
-        If clsParameter IsNot Nothing Then
+        MyBase.UpdateControl(bReset:=bReset, bCloneIfNeeded:=bCloneIfNeeded)
+
+        clsMainParameter = GetParameter()
+        If clsMainParameter IsNot Nothing Then
             If bChangeParameterValue Then
-                If bParameterIsString AndAlso clsParameter.bIsString Then
-                    strDataFrameName = clsParameter.strArgumentValue
-                ElseIf bParameterIsRFunction AndAlso clsParameter.bIsFunction Then
-                    clsTempDataParameter = clsParameter.clsArgumentCodeStructure.GetParameter(strDataParameterNameInRFunction)
+                If bParameterIsString AndAlso clsMainParameter.bIsString Then
+                    strDataFrameName = clsMainParameter.strArgumentValue
+                ElseIf bParameterIsRFunction AndAlso clsMainParameter.bIsFunction Then
+                    clsTempDataParameter = clsMainParameter.clsArgumentCodeStructure.GetParameter(strDataParameterNameInRFunction)
                     If clsTempDataParameter IsNot Nothing Then
-                        strDataFrameName = clsParameter.clsArgumentCodeStructure.GetParameter(strDataParameterNameInRFunction).strArgumentValue
+                        strDataFrameName = clsMainParameter.clsArgumentCodeStructure.GetParameter(strDataParameterNameInRFunction).strArgumentValue
                     End If
                 End If
             End If
@@ -197,16 +203,30 @@ Public Class ucrDataFrame
     Public Sub SetParameterIsString()
         bParameterIsString = True
         bParameterIsRFunction = False
-        UpdateParameter()
+        UpdateAllParameters()
     End Sub
 
     Public Sub SetParameterIsRFunction()
         bParameterIsRFunction = True
         bParameterIsString = False
-        UpdateParameter()
+        UpdateAllParameters()
     End Sub
 
     Public Overrides Function IsRDefault() As Boolean
-        Return clsParameter IsNot Nothing AndAlso objRDefault IsNot Nothing AndAlso objRDefault.Equals(cboAvailableDataFrames.Text)
+        Return GetParameter() IsNot Nothing AndAlso objRDefault IsNot Nothing AndAlso objRDefault.Equals(cboAvailableDataFrames.Text)
     End Function
+
+    Private Sub ucrDataFrame_DataFrameChanged(sender As Object, e As EventArgs, strPrevDataFrame As String) Handles Me.DataFrameChanged
+        If frmMain.clsInstatOptions.bChangeDataFrame Then
+            frmMain.SetCurrentDataFrame(cboAvailableDataFrames.Text)
+        End If
+    End Sub
+
+    Public Sub SetLabelText(strText As String)
+        lblDataFrame.Text = strText
+    End Sub
+
+    Private Sub mnuRightClickSetData_Click(sender As Object, e As EventArgs) Handles mnuRightClickSetData.Click
+        frmMain.SetCurrentDataFrame(cboAvailableDataFrames.Text)
+    End Sub
 End Class

@@ -1,5 +1,5 @@
-﻿' Instat-R
-' Copyright (C) 2015
+﻿' R- Instat
+' Copyright (C) 2015-2017
 '
 ' This program is free software: you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
 ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ' GNU General Public License for more details.
 '
-' You should have received a copy of the GNU General Public License k
+' You should have received a copy of the GNU General Public License 
 ' along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Imports instat.Translations
@@ -28,7 +28,6 @@ Public Class dlgRestrict
     Public bAutoOpenSubDialog As Boolean = False
 
     Public Sub New()
-
         ' This call is required by the designer.
         InitializeComponent()
 
@@ -61,13 +60,18 @@ Public Class dlgRestrict
 
     Private Sub InitialiseDialog()
         ucrInputFilterPreview.txtInput.ReadOnly = True
-        ucrSelectorFilter.SetItemType("filter")
+        ucrReceiverFilter.SetItemType("filter")
         ucrReceiverFilter.strSelectorHeading = "Filters"
         ucrReceiverFilter.Selector = ucrSelectorFilter
         ucrReceiverFilter.SetMeAsReceiver()
-        ucrNewDataFrameName.SetValidationTypeAsRVariable()
         ucrBase.iHelpTopicID = 340
         'rdoApplyAsSubset.Enabled = False
+
+        ' ucrSave
+        ucrNewDataFrameName.SetIsTextBox()
+        ucrNewDataFrameName.SetSaveTypeAsDataFrame()
+        ucrNewDataFrameName.SetLabelText("New Data Frame Name:")
+        ucrNewDataFrameName.SetDataFrameSelector(ucrSelectorFilter.ucrAvailableDataFrames)
     End Sub
 
     Private Sub SetDefaults()
@@ -81,14 +85,10 @@ Public Class dlgRestrict
     End Sub
 
     Private Sub TestOkEnabled()
-        If ucrReceiverFilter.IsEmpty Then
-            ucrBase.OKEnabled(False)
+        If Not ucrReceiverFilter.IsEmpty AndAlso ((rdoApplyAsSubset.Checked AndAlso ucrNewDataFrameName.IsComplete) OrElse (rdoApplyAsFilter.Checked)) Then
+            ucrBase.OKEnabled(True)
         Else
-            If rdoApplyAsSubset.Checked Then
-                ucrBase.OKEnabled(Not ucrNewDataFrameName.IsEmpty)
-            Else
-                ucrBase.OKEnabled(True)
-            End If
+            ucrBase.OKEnabled(False)
         End If
     End Sub
 
@@ -117,8 +117,8 @@ Public Class dlgRestrict
     End Sub
 
     Private Sub OpenNewFilterSubDialog()
-        sdgCreateFilter.ucrCreateFilter.SetDefaultDataFrame(strDefaultDataframe)
-        If strDefaultColumn <> "" Then
+        sdgCreateFilter.ucrCreateFilter.SetDefaultDataFrame(ucrSelectorFilter.ucrAvailableDataFrames.cboAvailableDataFrames.Text)
+        If strDefaultColumn <> "" AndAlso ucrSelectorFilter.ucrAvailableDataFrames.cboAvailableDataFrames.Text = strDefaultDataframe Then
             sdgCreateFilter.ucrCreateFilter.SetDefaultColumn(strDefaultColumn)
         End If
         sdgCreateFilter.ShowDialog()
@@ -141,7 +141,7 @@ Public Class dlgRestrict
 
     Private Sub SetDefaultNewDataFrameName()
         If ucrSelectorFilter.ucrAvailableDataFrames.cboAvailableDataFrames.Text <> "" Then
-            ucrNewDataFrameName.SetName(ucrSelectorFilter.ucrAvailableDataFrames.cboAvailableDataFrames.Text & "_subset")
+            ucrNewDataFrameName.SetPrefix(ucrSelectorFilter.ucrAvailableDataFrames.cboAvailableDataFrames.Text & "_subset")
         End If
     End Sub
 
@@ -153,7 +153,7 @@ Public Class dlgRestrict
     Private Sub SetFilterOptions()
         If ucrReceiverFilter.IsEmpty Then
             'TODO translate this
-            ucrInputFilterPreview.SetName("Current Filter will be removed.")
+            ucrInputFilterPreview.SetName("( )")
             clsSubset.RemoveParameterByName("filter_name")
             clsFilterView.RemoveParameterByName("filter_name")
             clsSetCurrentFilter.RemoveParameterByName("filter_name")
@@ -162,7 +162,7 @@ Public Class dlgRestrict
             clsSubset.AddParameter("filter_name", ucrReceiverFilter.GetVariableNames())
             clsSetCurrentFilter.AddParameter("filter_name", ucrReceiverFilter.GetVariableNames())
             Try
-                ucrInputFilterPreview.SetName(frmMain.clsRLink.RunInternalScriptGetValue(clsFilterView.ToScript()).AsCharacter(0))
+                ucrInputFilterPreview.SetName(frmMain.clsRLink.RunInternalScriptGetValue(clsFilterView.ToScript(), bSilent:=True).AsCharacter(0))
             Catch ex As Exception
                 ucrInputFilterPreview.SetName("Preview not available")
             End Try
@@ -172,18 +172,13 @@ Public Class dlgRestrict
 
     Private Sub rdoApplyAs_CheckedChanged(sender As Object, e As EventArgs) Handles rdoApplyAsFilter.CheckedChanged, rdoApplyAsSubset.CheckedChanged
         If rdoApplyAsFilter.Checked Then
-            lblNewDataFrameName.Visible = False
             ucrNewDataFrameName.Visible = False
         Else
-            lblNewDataFrameName.Visible = True
             ucrNewDataFrameName.Visible = True
         End If
         SetFilterOptions()
         SetBaseFunction()
-    End Sub
-
-    Private Sub ucrNewDataFrameName_NameChanged() Handles ucrNewDataFrameName.NameChanged
-        SetBaseFunction()
+        TestOkEnabled()
     End Sub
 
     Private Sub SetBaseFunction()
@@ -197,7 +192,7 @@ Public Class dlgRestrict
         Else
             ucrBase.clsRsyntax.SetBaseRFunction(clsSubset)
             clsSubset.AddParameter("new_name", Chr(34) & ucrNewDataFrameName.GetText() & Chr(34))
-            If Not ucrNewDataFrameName.IsEmpty() Then
+            If ucrNewDataFrameName.IsComplete() Then
                 'ucrBase.clsRsyntax.SetAssignTo(ucrNewDataFrameName.GetText(), strTempDataframe:=ucrNewDataFrameName.GetText())
             Else
                 'ucrBase.clsRsyntax.RemoveAssignTo()
@@ -207,5 +202,13 @@ Public Class dlgRestrict
 
     Private Sub ucrBase_ClickReset(sender As Object, e As EventArgs) Handles ucrBase.ClickReset
         SetDefaults()
+    End Sub
+
+    Private Sub ucrNewDataFrameName_ControlContentsChanged(ucrChangedControl As ucrCore) Handles ucrNewDataFrameName.ControlContentsChanged
+        TestOkEnabled()
+    End Sub
+
+    Private Sub ucrNewDataFrameName_ControlValueChanged(ucrChangedControl As ucrCore) Handles ucrNewDataFrameName.ControlValueChanged
+        SetBaseFunction()
     End Sub
 End Class
